@@ -25,9 +25,25 @@
         </div>
       </div>
     </nav>
+<div class="container">
 
-    <div class="container">
-      <p>There Will Be Films</p>
+       {% for x,y,z, img_link in movies_info %}
+
+         <div class="thumbnail">
+            <a href="#">
+               <img src="{{ img_link }}" class="img-responsive">
+            </a>
+            <div class="caption">
+                <p>
+                    SomeText
+                </p>
+            </div>
+        </div>
+      {% endfor %}
+
+</div>
+
+
     </div><!-- /.container -->
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
