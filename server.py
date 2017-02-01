@@ -15,7 +15,7 @@ def grouped(l, n):
 @app.route('/')
 def films_list():
 
-    return render_template('films_list.html', movies_info=movies_info[:25])
+    return render_template('films_list.html', movies_info=movies_info)
 
 if __name__ == "__main__":
     app.run()

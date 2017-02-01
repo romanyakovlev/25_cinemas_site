@@ -18,12 +18,6 @@
 
   <body>
 
-
-
-
-
-
-
     <nav class="navbar">
       <div class="container">
         <div class="navbar-header">
@@ -33,7 +27,11 @@
     </nav>
 
     <div class="container-fluid">
-
+<div class="progress">
+  <div class="progress-bar" id="1" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 100%;">
+    asdf
+  </div>
+</div>
         <div class="row">
             {% for x, y, p, _ in movies_info %}
                 {% if _  % 4 == 0 %}
@@ -47,13 +45,14 @@
                 {% endif %}
             <div class="col-sm-6 col-md-4 col-lg-3">
                 <div class="thumbnail">
-                    <div id="toggeElement{{_}}" style="position:absolute;background-color:white;margin-right:20px;max-height:80%;overflow-y: scroll;">
+                    <div id="toggeElement{{_}}" style="display:none;position:absolute;background-color:white;margin-right:20px;max-height:80%;overflow-y: scroll;">
                             {{p['text']}}
                     </div>
                       <img src="{{p['image']}}" alt="">
                       <div class="caption">
                         <div class="progress">
                           <div aria-valuenow="{{p['aggregateRating']['ratingValue']}}" class="progress-bar progress-bar-striped" role="progressbar" style="width: {{p['aggregateRating']['ratingValue']|float * 20}}%">
+
                             {{p['aggregateRating']['ratingValue']}}/5 ({{p['aggregateRating']['ratingCount']}} оценок)
                           </div>
                         </div>
@@ -79,36 +78,52 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
     <script>
-        thumbs_arr = $(document).find('.thumbnail');
-        $(thumbs_arr[0]).find('.progress-bar').attr('aria-valuenow');
-        for (var i = 0; i < thumbs_arr.length; i++ ) {
-            var progress_bar = $(thumbs_arr[i]).find('.progress-bar');
-            var user_rating = parseFloat(progress_bar.attr('aria-valuenow'));
-            if (user_rating >= 3.75) {
-                progress_bar.addClass('progress-bar-success');
-            } else if (user_rating < 3.75 && user_rating >= 2.5 ) {
-                progress_bar.addClass('progress-bar-warning');
-            } else {
-                progress_bar.addClass('progress-bar-danger');
-            }
-        };
-
-        $("[id^='toggeElement']").hide();
-
-        $("[href^='#toggeElement']").click(function(){
-            var description = $(document).find($(this).attr('href'));
-            var display = description.is(':visible');
-            if ( display === false ) {
-                console.log('hide it!');
-                height_of_image = description.siblings('img')[0].clientHeight;
-                description.height(height_of_image);
-                description.slideDown('slow');
-          } else if ( display === true ) {
-                description.slideUp('slow');
-                console.log('show it!');
-            }
+        // Выставляем рейтинг фильмам
+        $(function() {
+            var thumbs_arr = $(document).find('.thumbnail');
+            $(thumbs_arr[0]).find('.progress-bar').attr('aria-valuenow');
+            for (var i = 0; i < thumbs_arr.length; i++ ) {
+                var progress_bar = $(thumbs_arr[i]).find('.progress-bar');
+                var user_rating = parseFloat(progress_bar.attr('aria-valuenow'));
+                if (user_rating >= 3.75) {
+                    progress_bar.addClass('progress-bar-success');
+                } else if (user_rating < 3.75 && user_rating >= 2.5 ) {
+                    progress_bar.addClass('progress-bar-warning');
+                } else {
+                    progress_bar.addClass('progress-bar-danger');
+                }
+            };
         });
 
+        // Делаем слайдер для "Показать описание"
+        $(function() {
+            $("[href^='#toggeElement']").click(function(){
+                var description = $(document).find($(this).attr('href'));
+                var display = description.is(':visible');
+                if ( display === false ) {
+                    height_of_image = description.siblings('img')[0].clientHeight;
+                    description.height(height_of_image);
+                    description.slideDown('slow');
+              } else if ( display === true ) {
+                    description.slideUp('slow');
+                }
+            });
+        });
+
+        // Заменяем progress-bar где нет оценок
+        $(function() {
+            var progress_bar_arr = $(document).find('.progress-bar');
+            var div_1 = $('<div/>', {
+                class: 'progress-bar',
+                text: 'Нет оценок',
+            	style: "background-image:none; background-color:#b3b3b3;width:100%;"
+            });
+            for (var i = 0; i < progress_bar_arr.length; i++ ) {
+                if ($(progress_bar_arr[i]).attr('aria-valuenow') === '0' ){
+                    $(progress_bar_arr[i]).replaceWith(div_1);
+                }
+            }
+        });
     </script>
 
 

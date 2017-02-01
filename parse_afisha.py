@@ -1,3 +1,4 @@
+from flask import safe_join
 from bs4 import BeautifulSoup
 import requests
 import json
@@ -23,6 +24,14 @@ def get_movies_info():
         cinema_json = soup_data.find_all(attrs={"type":"application/ld+json"})
         json_1_text = soup_data.find(attrs={"type":"application/ld+json"}).text
         json_1 = json.loads(json_1_text)
+        try:
+            json_1['aggregateRating']['ratingValue']
+        except:
+            json_1['aggregateRating'] = {'ratingValue': '0', 'ratingCount': '0'}
+        try:
+            json_1['image']
+        except:
+            json_1['image'] = safe_join('static', 'no_image.jpg')
         movies_info[_].append(json_1)
         movies_info[_].append(_)
     return movies_info
