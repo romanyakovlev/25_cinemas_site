@@ -1,0 +1,33 @@
+/* Index template */
+.movie-text {
+    display:none;
+    position:absolute;
+    background-color:white;
+    margin-right:20px;
+    max-height:80%;
+    overflow-y: scroll;
+}
+
+.text-description {
+    text-decoration:underline;
+    font-size:larger;
+}
+
+.text-headline {
+    font-style:italic;
+    color:grey;
+}
+
+/* Api use template */
+
+.h1-bold {
+    font-weight:bold;
+}
+
+.div-api p {
+    font-size:24px;
+}
+
+.ul-font {
+    font-size:22px;
+}

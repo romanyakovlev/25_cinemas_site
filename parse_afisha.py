@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import requests
 import json
 
+
 def fetch_afisha_page():
     request = requests.get('http://www.afisha.ru/krasnoyarsk/schedule_cinema/')
     return request.content
@@ -11,37 +12,41 @@ def fetch_afisha_page():
 def parse_afisha_list(raw_html):
     soup_data =  BeautifulSoup(raw_html, 'html.parser')
     movies_list = soup_data.find_all(class_="object")
-    movies_info = [[movie.find(class_="m-disp-table").a['href'][2:],
-                 len(movie.find_all(class_="b-td-item"))] for movie in movies_list]
-    return movies_info
+    movies_info_list = [movie.find(class_="m-disp-table").a['href'][2:] for movie in movies_list]
+    return movies_info_list
+
+
+def get_movie_info_dict(afisha_link):
+    response_content = requests.get('http://{}'.format(afisha_link)).content
+    soup_data =  BeautifulSoup(response_content, 'html.parser')
+    response_json = soup_data.find(attrs={"type": "application/ld+json"}).text
+    movie_info_dict = json.loads(response_json)
+    return movie_info_dict
+
+
+def check_for_empty_value(movie_info_dict):
+    if 'text' not in movie_info_dict.keys():
+        movie_info_dict['text'] = 'Нет описания'
+    if 'aggregateRating' not in movie_info_dict.keys():
+        movie_info_dict['aggregateRating'] = {'ratingValue': '0', 'ratingCount': '0'}
+    if 'image' not in movie_info_dict.keys():
+        movie_info_dict['image'] = safe_join('static', 'no_image.jpg')
+    return movie_info_dict
+
+
+def get_movie_info(afisha_link, movie_id, keys_set):
+    movie_info_dict = get_movie_info_dict(afisha_link)
+    movie_info_dict = check_for_empty_value(movie_info_dict)
+    filtered_movie_dict = {key: movie_info_dict[key] for key in keys_set}
+    filtered_movie_dict['id'] = movie_id
+    return filtered_movie_dict
 
 
 def get_movies_info():
-    movies_info = parse_afisha_list(fetch_afisha_page())
-    for _, (link, cinema_quantity) in enumerate(movies_info):
-        content = requests.get('http://'+link).content
-        soup_data =  BeautifulSoup(content, 'html.parser')
-        cinema_json = soup_data.find_all(attrs={"type":"application/ld+json"})
-        json_1_text = soup_data.find(attrs={"type":"application/ld+json"}).text
-        json_1 = json.loads(json_1_text)
-        try:
-            json_1['aggregateRating']['ratingValue']
-        except:
-            json_1['aggregateRating'] = {'ratingValue': '0', 'ratingCount': '0'}
-        try:
-            json_1['image']
-        except:
-            json_1['image'] = safe_join('static', 'no_image.jpg')
-        movies_info[_].append(json_1)
-        movies_info[_].append(_)
-    return movies_info
-
-if __name__ == '__main__':
-    content = requests.get('http://www.afisha.ru/movie/228065/').content
-    soup_data =  BeautifulSoup(content, 'html.parser')
-    cinema_json = soup_data.find_all(attrs={"type":"application/ld+json"})
-    json_1_text = soup_data.find(attrs={"type":"application/ld+json"}).text
-    json_1 = json.loads(json_1_text)
-
-    for y, x in enumerate(get_movies_info()):
-        print(y, x[-1]['aggregateRating']['ratingValue'], x[-1]['name'])
+    keys_set = {'text', 'url', 'name', 'aggregateRating', 'description', 'image', 'alternativeHeadline', 'genre'}
+    movies_info_list = parse_afisha_list(fetch_afisha_page())
+    info_from_movie_page_list = []
+    for movie_id, afisha_link in enumerate(movies_info_list):
+        movie_info_dict = get_movie_info(afisha_link, movie_id, keys_set)
+        info_from_movie_page_list.append(movie_info_dict)
+    return info_from_movie_page_list

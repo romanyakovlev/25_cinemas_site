@@ -1,0 +1,101 @@
+{% extends "base_template.html" %}
+
+{% block title %}
+    Что в кино
+{% endblock %}
+
+{% block content %}
+    {% for movie in movies_info %}
+        {% if movie['id'] % 4 == 0 %}
+                <div class="clearfix visible-lg-block"></div>
+        {% endif %}
+        {% if movie['id'] % 3 == 0 %}
+            <div class="clearfix visible-md-block"></div>
+        {% endif %}
+        {% if movie['id'] % 2 == 0 %}
+            <div class="clearfix visible-sm-block"></div>
+        {% endif %}
+    <div class="col-sm-6 col-md-4 col-lg-3">
+        <div class="thumbnail">
+            <div id="toggeElement{{movie['id']}}" class="movie-text">
+                    {{movie['text']}}
+            </div>
+              <img src="{{movie['image']}}" alt="">
+              <div class="caption">
+                <div class="progress">
+                  <div aria-valuenow="{{movie['aggregateRating']['ratingValue']}}" class="progress-bar progress-bar-striped" role="progressbar" style="width: {{movie['aggregateRating']['ratingValue']|float * 20}}%">
+                    {{movie['aggregateRating']['ratingValue']}}/5 ({{movie['aggregateRating']['ratingCount']}} оценок)
+                  </div>
+                </div>
+                <h3>{{movie['name']}}</h3>
+                <p class="text-headline">{% if movie['alternativeHeadline'] %}{{movie['alternativeHeadline']}} , {% endif %}
+                    Жанр: {{movie['genre']}}
+                </p>
+                <p>{{movie['description']}}</p>
+                <div    class="row">
+                    <div class="col-xs-6">
+                        <a href="#" class="btn btn-primary" role="button">Расписание сеансов</a>
+                    </div>
+                    <div class="col-xs-6  text-right">
+                        <a onclick="return false;" href="#toggeElement{{movie['id']}}" class="text-decoration">Показать описание</a>
+                    </div>
+                </div>
+              </div>
+            </div>
+    </div>
+    {% endfor %}
+{% endblock %}
+
+{% block script %}
+    <script>
+        // Выставляем рейтинг фильмам
+        $(function() {
+            var thumbs_arr = $(document).find('.thumbnail');
+            $(thumbs_arr[0]).find('.progress-bar').attr('aria-valuenow');
+            for (var i = 0; i < thumbs_arr.length; i++ ) {
+                var progress_bar = $(thumbs_arr[i]).find('.progress-bar');
+                var user_rating = parseFloat(progress_bar.attr('aria-valuenow'));
+                if (user_rating >= 3.75) {
+                    progress_bar.addClass('progress-bar-success');
+                } else if (user_rating < 3.75 && user_rating >= 2.5 ) {
+                    progress_bar.addClass('progress-bar-warning');
+                } else {
+                    progress_bar.addClass('progress-bar-danger');
+                }
+            };
+        });
+
+        // Делаем слайдер для "Показать описание"
+        $(function() {
+            $("[href^='#toggeElement']").click(function(){
+                var description = $(document).find($(this).attr('href'));
+                var display = description.is(':visible');
+                if ( display === false ) {
+                    height_of_image = description.siblings('img')[0].clientHeight;
+                    description.height(height_of_image);
+                    width_of_image = description.siblings('img')[0].clientWidth;
+                    description.width(width_of_image);
+                    description.slideDown('slow');
+              } else if ( display === true ) {
+                    description.slideUp('slow');
+                }
+            });
+        });
+
+        // Заменяем progress-bar где нет оценок
+        $(function() {
+            var progress_bar_arr = $(document).find('.progress-bar');
+            var div_1 = $('<div/>', {
+                class: 'progress-bar',
+                text: 'Нет оценок',
+            	style: "background-image:none; background-color:#b3b3b3;width:100%;"
+            });
+            for (var i = 0; i < progress_bar_arr.length; i++ ) {
+                if ($(progress_bar_arr[i]).attr('aria-valuenow') === '0' ){
+                    $(progress_bar_arr[i]).replaceWith(div_1);
+                }
+            }
+        });
+
+    </script>
+{% endblock %}
