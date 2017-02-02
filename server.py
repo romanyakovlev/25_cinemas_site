@@ -1,6 +1,7 @@
 from flask import Flask, render_template, jsonify
 from parse_afisha import get_movies_info
 from werkzeug.contrib.cache import SimpleCache
+import os
 
 cache = SimpleCache()
 app = Flask(__name__)
