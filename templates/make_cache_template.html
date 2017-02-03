@@ -26,14 +26,20 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
     <script>
+    function get_ajax() {
         console.log('ok');
         $.ajax({
             url: "/make_cache",
             type: "POST",
             success: function() {
                 window.location.href = '/';
+            },
+            error: function() {
+                get_ajax();
             }
         });
+    }
+
     </script>
 </body>
 </html>
