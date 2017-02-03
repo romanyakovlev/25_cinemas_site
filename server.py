@@ -32,7 +32,7 @@ def make_cache():
     if request.method == "GET":
         return render_template('make_cache_template.html')
     if request.method == "POST":
-        get_movies_info_cache()
+        return get_movies_info_cache()
 
 
 @app.route('/api_use')
