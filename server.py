@@ -1,6 +1,7 @@
 from flask import Flask, render_template, jsonify, redirect, request
 from parse_afisha import get_movies_info
 from werkzeug.contrib.cache import SimpleCache
+import os
 
 cache = SimpleCache()
 app = Flask(__name__)
@@ -46,4 +47,5 @@ def movies_list_json():
 
 
 if __name__ == "__main__":
-    app.run()
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
