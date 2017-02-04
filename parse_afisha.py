@@ -2,6 +2,7 @@ from flask import safe_join
 from bs4 import BeautifulSoup
 import requests
 import json
+import re
 
 
 def fetch_afisha_page():
@@ -41,6 +42,7 @@ def get_movie_info(afisha_link, movie_id, keys_set):
     movie_info_dict = check_for_empty_value(movie_info_dict)
     filtered_movie_dict = {key: movie_info_dict[key] for key in keys_set}
     filtered_movie_dict['id'] = movie_id
+    re.sub(r'$http://', r'$https://', filtered_movie_dict['image'])
     return filtered_movie_dict
 
 
