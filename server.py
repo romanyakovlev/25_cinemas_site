@@ -10,13 +10,16 @@ app.config.update(
 )
 
 
-def get_movies_info_cache():
+def get_movies_info_cache(get_cache=False):
     movies_info = cache.get('movies-info')
     if movies_info is None:
         movies_info = get_movies_info()
         twelve_hours_timeout = 12 * 60 * 60
         cache.set('movies-info', movies_info, timeout=twelve_hours_timeout)
-    return jsonify({"response": "ok"})
+    if get_cache is False:
+        return jsonify({"response": "ok"})
+    else:
+        return movies_info
 
 
 @app.route('/')
@@ -42,7 +45,7 @@ def api_use():
 
 @app.route('/api/all_movies_info')
 def movies_list_json():
-    movies_info = get_movies_info_cache()
+    movies_info = get_movies_info_cache(get_cache=True)
     return jsonify({'movies_info': movies_info})
 
 
