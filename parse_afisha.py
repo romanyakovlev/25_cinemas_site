@@ -13,13 +13,14 @@ def fetch_afisha_page():
 def parse_afisha_list(raw_html):
     soup_data = BeautifulSoup(raw_html, 'html.parser')
     movies_list = soup_data.find_all(class_="object")
-    movies_info_list = [movie.find(class_="m-disp-table").a['href'][2:]
+    print(movies_list)
+    movies_info_list = [movie.find(class_="m-disp-table").a['href']
                         for movie in movies_list]
     return movies_info_list
 
 
 def get_movie_info_dict(afisha_link):
-    response_content = requests.get('http://{}'.format(afisha_link)).content
+    response_content = requests.get(afisha_link).content
     soup_data = BeautifulSoup(response_content, 'html.parser')
     response_json = soup_data.find(attrs={"type": "application/ld+json"}).text
     movie_info_dict = json.loads(response_json)
