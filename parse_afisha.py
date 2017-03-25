@@ -50,7 +50,6 @@ def get_movies_info():
     keys_set = {'text', 'url', 'name', 'aggregateRating', 'description',
                 'image', 'alternativeHeadline', 'genre'}
     movies_info_list = parse_afisha_list(fetch_afisha_page())
-    print(len(movies_info_list))
     info_from_movie_page_list = []
     for movie_id, afisha_link in enumerate(movies_info_list[:10]):
         movie_info_dict = get_movie_info(afisha_link, movie_id, keys_set)
