@@ -2,7 +2,7 @@
 
 Sinemas site. Information is taken from [Afisha website](https://afisha.ru). Informaiton is cached for 12 hours with SimpleCache. Ready for deployment on Heroku.
 
-# [Site link](https://http://cinema-site-25.herokuapp.com/)
+# [Site link](http://cinema-site-25.herokuapp.com/)
 
 # What in use
 - Flask
