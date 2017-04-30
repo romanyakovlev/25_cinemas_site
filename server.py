@@ -8,6 +8,7 @@ app = Flask(__name__)
 app.config.update(
     TEMPLATES_AUTO_RELOAD=True,
 )
+app.secret_key = 'super secret key'
 
 def get_movies_info_cache():
     movies_info = cache.get('movies-info')
