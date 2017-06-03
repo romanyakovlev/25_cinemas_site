@@ -20,6 +20,22 @@
             <div id="toggeElement{{movie['id']}}" class="movie-text">
                     {{movie['text']}}
             </div>
+
+            <div class="modal fade" id="myModal{{movie['id']}}" tabindex="-1" role="dialog">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">{{movie['name']}}</h4>
+                  </div>
+                  <div class="modal-body">{{movie['text']}}</div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
               <img src="{{movie['image']}}" alt="">
               <div class="caption">
                 <div class="progress">
@@ -28,16 +44,20 @@
                   </div>
                 </div>
                 <h3>{{movie['name']}}</h3>
-                <p class="text-headline">{% if movie['alternativeHeadline'] %}{{movie['alternativeHeadline']}} , {% endif %}
+                <p class="original-title">{{movie['alternativeHeadline']}}</p>
+                <p class="text-headline">
                     Жанр: {{movie['genre']}}
                 </p>
+                <p class="description"></p>
                 <p>{{movie['description']}}</p>
                 <div    class="row">
                     <div class="col-xs-6">
                         <a href="{{movie['url']}}" class="btn btn-primary" role="button">Расписание сеансов</a>
                     </div>
                     <div class="col-xs-6  text-right">
-                        <a onclick="return false;" href="#toggeElement{{movie['id']}}" class="text-decoration">Показать описание</a>
+                        <a class="text-decoration" href="#" data-toggle="modal" data-target="#myModal{{movie['id']}}" class="text-decoration">
+                            Показать описание
+                        </a>
                     </div>
                 </div>
               </div>
@@ -65,22 +85,7 @@
             };
         });
 
-        // Делаем слайдер для "Показать описание"
-        $(function() {
-            $("[href^='#toggeElement']").click(function(){
-                var description = $(document).find($(this).attr('href'));
-                var display = description.is(':visible');
-                if ( display === false ) {
-                    height_of_image = description.siblings('img')[0].clientHeight;
-                    description.height(height_of_image);
-                    width_of_image = description.siblings('img')[0].clientWidth;
-                    description.width(width_of_image);
-                    description.slideDown('slow');
-              } else if ( display === true ) {
-                    description.slideUp('slow');
-                }
-            });
-        });
+
 
         // Заменяем progress-bar где нет оценок
         $(function() {

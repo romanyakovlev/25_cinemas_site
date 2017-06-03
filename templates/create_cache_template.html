@@ -1,0 +1,137 @@
+{% extends "base_template.html" %}
+
+{% block title %}
+    Что в кино
+{% endblock %}
+
+{% block content %}
+
+    <script>
+    // Выставляем рейтинг фильмам
+    function change_bar(bar_div) {
+            var progress_bar = bar_div;
+            var user_rating = parseFloat(progress_bar.attr('aria-valuenow'));
+            if (user_rating >= 3.75) {
+                progress_bar.addClass('progress-bar-success');
+            } else if (user_rating < 3.75 && user_rating >= 2.5 ) {
+                progress_bar.addClass('progress-bar-warning');
+            } else {
+                progress_bar.addClass('progress-bar-danger');
+            }
+
+    };
+    </script>
+
+
+    {% for movie in movies_info %}
+        {% if movie['id'] % 4 == 0 %}
+            <div class="clearfix visible-lg-block"></div>
+        {% endif %}
+        {% if movie['id'] % 3 == 0 %}
+            <div class="clearfix visible-md-block"></div>
+        {% endif %}
+        {% if movie['id'] % 2 == 0 %}
+            <div class="clearfix visible-sm-block"></div>
+        {% endif %}
+    <div class="col-sm-6 col-md-4 col-lg-3">
+        <div class="thumbnail" id="{{movie['id']}}">
+            <script>
+            $.ajax({
+                type : "GET",
+                url : "/get_movie_info",
+                contentType: "application/json",
+                dataType: "json",
+                data: {'id': "{{movie['id']}}"},
+                success : function(data) {
+                    console.log(data);
+                    // Изображение
+                    $('#'+data['id']+' > '+ 'img').attr("src", data['image']);
+                    // Оценка
+                    $('#'+data['id']+' > '+ '.caption'+' > '+'.progress'+' > '+'.progress-bar').html(''+data['aggregateRating']['ratingValue']+'/5 ('+data['aggregateRating']['ratingCount']+' оценок)');
+                    $('#'+data['id']+' > '+ '.caption'+' > '+'.progress'+' > '+'.progress-bar').attr('style', 'width:'+parseFloat(data['aggregateRating']['ratingValue'])*20+'%');
+                    $('#'+data['id']+' > '+ '.caption'+' > '+'.progress'+' > '+'.progress-bar').attr('aria-valuenow', parseFloat(data['aggregateRating']['ratingValue']));
+                    change_bar($('#'+data['id']+' > '+ '.caption'+' > '+'.progress'+' > '+'.progress-bar'));
+                    $('#'+data['id']+' > '+ '.caption'+' > '+'h3.movie-title').html(data['name']);
+                    $('#'+data['id']+' > '+ '.caption'+' > '+'p.text-headline').html('Жанр: '+data['genre']);
+                    $('#'+data['id']+' > '+ '.caption'+' > '+'p.original-title').html(data['alternativeHeadline']);
+                    $('#'+data['id']+' > '+ '.caption'+' > '+'p.description').html(data['description']);
+                    $('#'+data['id']+' .btn-href-movie').attr('href', data['url']);
+                    $('#'+data['id']+' .modal-body').html(data['text']);
+                    $('#'+data['id']+' .modal-title').html(data['name']);
+                }
+            });
+            </script>
+            <div id="toggeElement{{movie['id']}}" class="movie-text">
+
+            </div>
+
+            <div class="modal fade" id="myModal{{movie['id']}}" tabindex="-1" role="dialog">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title"></h4>
+                  </div>
+                  <div class="modal-body"></div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+              <img src="{{movie['image']}}" alt="">
+              <div class="caption">
+                <div class="progress">
+                  <div aria-valuenow="" class="progress-bar progress-bar-striped" role="progressbar">
+                     оценок
+                  </div>
+                </div>
+                <h3 class="movie-title"></h3>
+                <p class="original-title"></p>
+                <p class="text-headline"></p>
+                <p class="description"></p>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <a href="" class="btn btn-primary btn-href-movie" role="button">Расписание сеансов</a>
+                    </div>
+                    <div class="col-xs-6  text-right">
+
+
+                        <a class="text-decoration" href="#" data-toggle="modal" data-target="#myModal{{movie['id']}}" class="text-decoration">
+                            Показать описание
+                        </a>
+
+
+
+
+                    </div>
+                </div>
+              </div>
+            </div>
+    </div>
+    {% endfor %}
+{% endblock %}
+
+{% block script %}
+    <script>
+
+
+
+        // Заменяем progress-bar где нет оценок
+        $(function() {
+            var progress_bar_arr = $(document).find('.progress-bar');
+            var div_1 = $('<div/>', {
+                class: 'progress-bar',
+                text: 'Нет оценок',
+            	style: "background-image:none; background-color:#b3b3b3;width:100%;"
+            });
+            for (var i = 0; i < progress_bar_arr.length; i++ ) {
+                if ($(progress_bar_arr[i]).attr('aria-valuenow') === '0' ){
+                    $(progress_bar_arr[i]).replaceWith(div_1);
+                }
+            }
+        });
+
+    </script>
+{% endblock %}

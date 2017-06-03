@@ -13,9 +13,9 @@ def fetch_afisha_page():
 def parse_afisha_list(raw_html):
     soup_data = BeautifulSoup(raw_html, 'html.parser')
     movies_list = soup_data.find_all(class_="object")
-    movies_info_list = [movie.find(class_="m-disp-table").a['href']
-                        for movie in movies_list]
-    return movies_info_list
+    movies_info_list = [{'href':movie.find(class_="m-disp-table").a['href'],
+                         'id':num} for num, movie in enumerate(movies_list)]
+    return movies_info_list[:10]
 
 
 def get_movie_info_dict(afisha_link):
