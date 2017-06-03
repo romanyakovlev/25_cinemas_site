@@ -10,40 +10,35 @@
     <link rel="icon" href="favicon.ico">
 
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <title>{% block title %}{% endblock %}</title>
+    <title>Загрузка...</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
-  </head>
-
-  <body>
-
-    <nav class="navbar">
-      <div class="container">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="/">Что в кино</a>
-          <a class="navbar-brand" href="/api_use">Работа с API</a>
-        </div>
-      </div>
-    </nav>
-
-    <div class="container-fluid">
-        <div class="row">
-                {% block  content %}{% endblock %}
-        </div>
+</head>
+<body>
+    <div class="col-xs-12 col-md-8 col-md-offset-2">
+        <h1 class="text-center margin-auto">Идет получение данных о фильмах.<br> Подождите немного...</h1>
+        <img class="img-responsive margin-auto" src="http://www.downgraf.com/wp-content/uploads/2014/09/01-progress.gif" alt="">
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
-    {% block script %}{% endblock %}
-    <footer>
-        <div class="container-fluid">
-            <div class="row text-center">
-                <p>Настоящий сайт создан в исключительно учебных целях. Все сведения о фильмах взяты с сайта <a href="https://www.afisha.ru/">Афиша</a>.</p>
-            </div>
-        </div>
-    </footer>
-  </body>
+    <script>
+    $(function get_ajax() {
+        $.ajax({
+            url: "/make_cache",
+            type: "POST",
+            success: function() {
+                window.location.href = '/';
+            },
+            error: function() {
+                get_ajax();
+            },
+            timeout: 1000
+        });
+    });
+    </script>
+</body>
 </html>
