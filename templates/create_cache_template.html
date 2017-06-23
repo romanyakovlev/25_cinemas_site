@@ -79,8 +79,11 @@
                 </div>
               </div>
             </div>
-
-              <img src="{{movie['image']}}" alt="">
+            <img src="{% if movie['image'] %}
+                        {{movie['image']}}
+                      {% else %}
+                        http://via.placeholder.com/350x150?text=Загрузка...
+                      {% endif %}">
               <div class="caption">
                 <div class="progress">
                   <div aria-valuenow="" class="progress-bar progress-bar-striped" role="progressbar">

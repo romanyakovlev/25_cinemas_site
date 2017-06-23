@@ -28,7 +28,12 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title">{{movie['name']}}</h4>
                   </div>
-                  <div class="modal-body">{{movie['text']}}</div>
+                  <div class="modal-body">{% if movie['text'] %}
+                                            {{movie['text']}}
+                                          {% else %}
+                                            нет описания
+                                          {% endif %}
+                      </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
                   </div>
@@ -36,7 +41,12 @@
               </div>
             </div>
 
-              <img src="{{movie['image']}}" alt="">
+            <img src="{% if movie['image'] %}
+                        {{movie['image']}}
+                      {% else %}
+                        http://via.placeholder.com/350x150?text=Загрузка...
+                      {% endif %}">
+
               <div class="caption">
                 <div class="progress">
                   <div aria-valuenow="{{movie['aggregateRating']['ratingValue']}}" class="progress-bar progress-bar-striped" role="progressbar" style="width: {{movie['aggregateRating']['ratingValue']|float * 20}}%">
