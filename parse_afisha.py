@@ -2,7 +2,10 @@ from flask import safe_join
 from bs4 import BeautifulSoup
 import requests
 import json
-import re
+
+
+movie_options_list = ['text', 'url', 'name', 'aggregateRating', 'description',
+                      'image', 'alternativeHeadline', 'genre']
 
 
 def fetch_afisha_page():
@@ -13,8 +16,8 @@ def fetch_afisha_page():
 def parse_afisha_list(raw_html):
     soup_data = BeautifulSoup(raw_html, 'html.parser')
     movies_list = soup_data.find_all(class_="object")
-    movies_info_list = [{'href':movie.find(class_="m-disp-table").a['href'],
-                         'id':num} for num, movie in enumerate(movies_list)]
+    movies_info_list = [{'href': movie.find(class_="m-disp-table").a['href'],
+                         'id': num} for num, movie in enumerate(movies_list)]
     return movies_info_list[:10]
 
 
@@ -48,9 +51,7 @@ def get_movie_info(afisha_link, movie_id, keys_set):
 
 
 def get_movies_info():
-    keys_set = {'text', 'url', 'name', 'aggregateRating', 'description',
-                'image', 'alternativeHeadline', 'genre'}
     movies_info_list = parse_afisha_list(fetch_afisha_page())
-    info_from_movie_page_list = [get_movie_info(afisha_link['href'], movie_id, keys_set)
+    info_from_movie_page_list = [get_movie_info(afisha_link['href'], movie_id, movie_options_list)
                                  for movie_id, afisha_link in enumerate(movies_info_list[:10])]
     return info_from_movie_page_list

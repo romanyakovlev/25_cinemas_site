@@ -1,5 +1,6 @@
-from flask import Flask, render_template, jsonify, redirect, request
-from parse_afisha import get_movies_info, parse_afisha_list, fetch_afisha_page, get_movie_info
+from flask import Flask, render_template, jsonify, request
+from parse_afisha import get_movies_info, parse_afisha_list, fetch_afisha_page,\
+    get_movie_info, movie_options_list
 
 from werkzeug.contrib.cache import SimpleCache
 import os
@@ -22,16 +23,17 @@ def get_movies_info_cache():
         cache.set('movies-info', movies_info, timeout=twelve_hours_timeout)
     return movies_info
 
+
 def create_cache(json_dict):
     movies_info = cache.get('movies-info')
     if movies_info is None:
         movies_info = []
-
     if json_dict not in movies_info:
         movies_info.append(json_dict)
     twelve_hours_timeout = 12 * 60 * 60
     cache.set('movies-info', movies_info, timeout=twelve_hours_timeout)
     return json_dict
+
 
 @app.route('/')
 def movies_list():
@@ -44,10 +46,8 @@ def movies_list():
 
 @app.route('/get_movie_info')
 def movies_list1():
-    keys_set = {'text', 'url', 'name', 'aggregateRating', 'description',
-                'image', 'alternativeHeadline', 'genre'}
     movie_id  = int(request.args.get('id'))
-    json_arr = get_movie_info(afisha_arr[movie_id]['href'], movie_id, keys_set)
+    json_arr = get_movie_info(afisha_arr[movie_id]['href'], movie_id, movie_options_list)
     json_arr = create_cache(json_arr)
     return jsonify(json_arr)
 
