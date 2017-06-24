@@ -29,20 +29,11 @@ def get_movie_info_dict(afisha_link):
     return movie_info_dict
 
 
-def check_for_empty_value(movie_info_dict):
-    if 'text' not in movie_info_dict.keys():
-        movie_info_dict['text'] = None
-    if 'aggregateRating' not in movie_info_dict.keys():
-        movie_info_dict['aggregateRating'] = {'ratingValue': '0',
-                                              'ratingCount': '0'}
-    if 'image' not in movie_info_dict.keys():
-        movie_info_dict['image'] = safe_join('static', 'no_image.jpg')
-    return movie_info_dict
-
-
 def get_movie_info(afisha_link, movie_id, keys_set):
     movie_info_dict = get_movie_info_dict(afisha_link)
-    movie_info_dict = check_for_empty_value(movie_info_dict)
+    movie_info_dict.setdefault('text')
+    movie_info_dict.setdefault('aggregateRating', {'ratingValue': '0', 'ratingCount': '0'})
+    movie_info_dict.setdefault('image', safe_join('static', 'no_image.jpg'))
     filtered_movie_dict = {key: movie_info_dict[key] for key in keys_set}
     link_without_scheme = filtered_movie_dict['image'][6:]
     filtered_movie_dict['image'] = link_without_scheme
